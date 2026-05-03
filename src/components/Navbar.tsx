@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useCartSelector } from "../store/hooks";
+import { englishToPersian } from "../utils/formatNumber";
+
 import Cart from "./Cart";
+
+import CartIcon from "../assets/svg/cart.svg";
 
 interface NavbarProps {
   search: string;
@@ -34,7 +38,11 @@ function Navbar({ search, onSearchChange }: NavbarProps) {
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
         />
-        <button onClick={handleOpenCart}>سبد خرید ({cartQuantity})</button>
+        <button onClick={handleOpenCart}>
+          سبد خرید
+          <img src={CartIcon} alt="cart-icon" />(
+          {englishToPersian(cartQuantity)})
+        </button>
       </div>
     </>
   );

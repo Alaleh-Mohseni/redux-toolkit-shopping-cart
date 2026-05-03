@@ -1,6 +1,7 @@
 import { useCartSelector, useCartDispatch } from "../store/hooks";
 
 import { type CartItem, addToCart, removeFromCart } from "../store/cart-slice";
+import { englishToPersian, formatPrice } from "../utils/formatNumber";
 
 function CartItems() {
   const cartItems = useCartSelector((state) => state.cart.items);
@@ -32,7 +33,7 @@ function CartItems() {
               </div>
               <div className="cart-item-actions">
                 <button onClick={() => handleRemoveFromCart(item.id)}>-</button>
-                <span>{item.quantity}</span>
+                <span>{englishToPersian(item.quantity)}</span>
                 <button onClick={() => handleAddToCart(item)}>+</button>
               </div>
             </li>
@@ -42,7 +43,7 @@ function CartItems() {
 
       {cartItems.length > 0 && (
         <p className="cart-total-price">
-          مجموع: <strong>{totalPrice}</strong> تومان
+          مجموع: <strong>{formatPrice(totalPrice)}</strong> تومان
         </p>
       )}
     </div>
