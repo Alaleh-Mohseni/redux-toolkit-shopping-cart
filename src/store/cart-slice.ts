@@ -1,4 +1,5 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { addToCartAPI, removeFromCartAPI, fetchCart } from "../api/cart";
 
 export type CartItem = {
   id: string;
@@ -9,42 +10,52 @@ export type CartItem = {
 
 type CartState = {
   items: CartItem[];
+  loading: boolean;
+  error: string | null;
 };
 
 const initialState: CartState = {
   items: [],
+  loading: false,
+  error: null,
 };
+
+export const loadCart = createAsyncThunk("cart/load", async () => {
+  const data = await fetchCart();
+  return data.items;
+});
+
+export const addToCart = createAsyncThunk(
+  "cart/add",
+  async (item: { id: string; title: string; price: number }) => {
+    const data = await addToCartAPI(item);
+    return data.items;
+  },
+);
+
+export const removeFromCart = createAsyncThunk(
+  "cart/remove",
+  async (id: string) => {
+    const data = await removeFromCartAPI(id);
+    return data.items;
+  },
+);
 
 export const cartSlice = createSlice({
   name: "cart",
   initialState,
-  reducers: {
-    addToCart(
-      state,
-      action: PayloadAction<{ id: string; title: string; price: number }>,
-    ) {
-      const itemIndex = state.items.findIndex(
-        (item) => item.id === action.payload.id,
-      );
-
-      if (itemIndex >= 0) {
-        state.items[itemIndex].quantity++;
-      } else {
-        state.items.push({ ...action.payload, quantity: 1 });
-      }
-    },
-    removeFromCart(state, action: PayloadAction<string>) {
-      const itemIndex = state.items.findIndex(
-        (item) => item.id === action.payload,
-      );
-
-      if (state.items[itemIndex].quantity === 1) {
-        state.items.splice(itemIndex, 1);
-      } else {
-        state.items[itemIndex].quantity--;
-      }
-    },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(loadCart.fulfilled, (state, action) => {
+        state.items = action.payload;
+        state.loading = false;
+      })
+      .addCase(addToCart.fulfilled, (state, action) => {
+        state.items = action.payload;
+      })
+      .addCase(removeFromCart.fulfilled, (state, action) => {
+        state.items = action.payload;
+      });
   },
 });
-
-export const { addToCart, removeFromCart } = cartSlice.actions;

@@ -1,10 +1,13 @@
 import { useState } from "react";
-
 import { useCartSelector } from "../store/hooks";
-
 import Cart from "./Cart";
 
-function Navbar() {
+interface NavbarProps {
+  search: string;
+  onSearchChange: (value: string) => void;
+}
+
+function Navbar({ search, onSearchChange }: NavbarProps) {
   const [cartIsOpen, setCartIsOpen] = useState(false);
 
   const cartQuantity = useCartSelector((state) =>
@@ -23,6 +26,14 @@ function Navbar() {
     <>
       {cartIsOpen && <Cart onClose={handleCloseCart} />}
       <div className="navbar">
+        <div></div>
+        <input
+          type="text"
+          className="navbar-search"
+          placeholder="جستجوی محصول..."
+          value={search}
+          onChange={(e) => onSearchChange(e.target.value)}
+        />
         <button onClick={handleOpenCart}>سبد خرید ({cartQuantity})</button>
       </div>
     </>

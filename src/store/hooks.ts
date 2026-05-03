@@ -6,8 +6,8 @@ import {
 
 import type { AppDispatch, RootState } from "./store";
 
-type DispatchFuntion = () => AppDispatch;
+type DispatchFunction = () => AppDispatch;
 
-export const useCartDispatch: DispatchFuntion = useDispatch;
+export const useCartDispatch: DispatchFunction = useDispatch;
 
 export const useCartSelector: TypedUseSelectorHook<RootState> = useSelector;
